@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imobil_IA · Manual de Regras Oficiais</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Destaques visuais */
+        .badge-avancos {
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #34d399;
+        }
+        .badge-limites {
+            background-color: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #f87171;
+        }
+        .badge-token {
+            background-color: rgba(56, 189, 248, 0.15);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+        }
+
+        /* Estilização para impressão */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .rule-card {
+                background-color: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                color: #0f172a !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+            }
+            .text-emerald-400, .text-cyan-400, .text-amber-400, .text-indigo-400 {
+                color: #0f172a !important;
+            }
+            .badge-avancos, .badge-limites, .badge-token {
+                background: none !important;
+                border: 1px solid #0f172a !important;
+                color: #0f172a !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Painel Principal de Navegação (Sem Impressão) -->
+    <div class="no-print max-w-5xl mx-auto mb-8 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-xl p-6 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <span class="text-xs font-orbitron font-semibold tracking-widest text-emerald-400 uppercase">Documentação Oficial</span>
+            <h1 class="text-2xl md:text-3xl font-orbitron font-extrabold text-white mt-1">Imobil_IA · Manual de Regras</h1>
+            <p class="text-slate-400 text-sm mt-1">Guias, mecânicas de jogo e especificações de ecossistema</p>
+        </div>
+        <button onclick="window.print()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-orbitron font-bold px-6 py-2.5 rounded-lg text-sm transition shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+            Imprimir Regras
+        </button>
+    </div>
+
+    <!-- Conteúdo do Manual -->
+    <main class="max-w-5xl mx-auto space-y-6">
+
+        <!-- Header Visível em Impressão -->
+        <header class="border-b border-slate-700 pb-4 mb-6">
+            <div class="flex justify-between items-end">
+                <div>
+                    <h1 class="text-3xl font-orbitron font-black tracking-wide text-white">IMOBIL_IA</h1>
+                    <p class="text-xs font-orbitron text-emerald-400 tracking-wider uppercase mt-1">Regras Oficiais do Jogo de Tabuleiro</p>
+                </div>
+                <div class="text-right text-xs text-slate-400 font-mono">
+                    Versão 1.0 · A3/A4 Compatível
+                </div>
+            </div>
+        </header>
+
+        <!-- 1. Visão Geral -->
+        <section class="rule-card bg-slate-800/50 border border-slate-700/80 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-orbitron font-bold text-emerald-400 mb-3 border-b border-slate-700/50 pb-2">
+                1. Visão Geral e Objetivo do Jogo
+            </h2>
+            <p class="text-slate-300 leading-relaxed text-sm">
+                O mercado global de Inteligência Artificial está em plena expansão. No ecossistema <strong class="text-white">Imobil_IA</strong>, seu objetivo é adquirir ecossistemas tecnológicos, construir Data Centers, treinar seus modelos avançados de IA e gerenciar seus recursos energéticos e financeiros para evitar a bancarrota.
+            </p>
+            <div class="mt-4 p-3 bg-emerald-950/30 border border-emerald-500/30 rounded-lg">
+                <p class="text-xs text-emerald-200 font-medium">
+                    <strong class="font-orbitron text-emerald-400 uppercase">Objetivo Final:</strong> Ser o último corporador ou participante com Tokens ativos no mercado, enquanto todos os concorrentes entram em Falência Total de Processamento.
+                </p>
+            </div>
+        </section>
+
+        <!-- 2. Componentes -->
+        <section class="rule-card bg-slate-800/50 border border-slate-700/80 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-orbitron font-bold text-cyan-400 mb-4 border-b border-slate-700/50 pb-2">
+                2. Componentes do Jogo
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-300">
+                <div class="space-y-2">
+                    <h3 class="font-orbitron font-semibold text-white text-base">O Tabuleiro</h3>
+                    <p class="leading-relaxed">
+                        Dividido em ecossistemas tecnológicos (propriedades por setor de cor), Redes Elétricas (matriz energética), Provedores de Fibra/Nuvem (infraestrutura), retângulos de cartas de <span class="badge-avancos px-1.5 py-0.5 rounded text-xs font-semibold">Avanços</span> e <span class="badge-limites px-1.5 py-0.5 rounded text-xs font-semibold">Limites</span>, Imposto de Licenciamento e os cantos especiais <strong class="text-white">START / Servidor Ativo</strong> e <strong class="text-white">Servidores Fora do Ar (Manutenção) / Desconectar</strong>.
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="font-orbitron font-semibold text-white text-base">Tokens de Processamento ($TK$)</h3>
+                    <p class="leading-relaxed">
+                        A moeda oficial do jogo são os <span class="badge-token px-1.5 py-0.5 rounded text-xs font-semibold">Tokens ($TK$)</span>, divididos em cédulas ou fichas com valores de 1 $TK$, 5 $TK$, 10 $TK$, 20 $TK$, 50 $TK$, 100 $TK$ e 500 $TK$.
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="font-orbitron font-semibold text-white text-base">Data Centers e Superclusters</h3>
+                    <ul class="list-disc list-inside space-y-1 text-slate-300">
+                        <li><strong class="text-white">Data Centers Básicos:</strong> Estruturas de tamanho padrão (Resfriamento a Ar).</li>
+                        <li><strong class="text-white">Superclusters Hiperscala:</strong> Estruturas avançadas (Resfriamento Líquido de Alta Performance).</li>
+                    </ul>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="font-orbitron font-semibold text-white text-base">Baralhos Estratégicos</h3>
+                    <p class="leading-relaxed">
+                        Conjunto de 16 cartas de <strong class="text-emerald-400">Avanços</strong> (oportunidades e bonificações) e 16 cartas de <strong class="text-red-400">Limites</strong> (desafios, custos e sanções).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Preparação do Jogo -->
+        <section class="rule-card bg-slate-800/50 border border-slate-700/80 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-orbitron font-bold text-amber-400 mb-3 border-b border-slate-700/50 pb-2">
+                3. Preparação do Jogo
+            </h2>
+            <ol class="list-decimal list-inside space-y-2 text-sm text-slate-300 leading-relaxed">
+                <li>Um jogador é designado como <strong class="text-white">Banco Central da Nuvem (O Banco)</strong>. Ele gerencia as reservas de Tokens não distribuídos e os módulos de Data Centers.</li>
+                <li>Cada jogador escolhe um peão de identificação (ex: Chip, Robô, Servidor, Cabo de Fibra).</li>
+                <li><strong class="text-white">Capital Inicial:</strong> Cada jogador recebe uma reserva inicial de <span class="badge-token px-1.5 py-0.5 rounded text-xs font-semibold">1.500 Tokens ($TK$)</span>.</li>
+                <li>Embaralhe separadamente os montes de <strong class="text-emerald-400">Avanços</strong> e <strong class="text-red-400">Limites</strong> e posicione-os nos seus retângulos delimitados no centro do tabuleiro.</li>
+            </ol>
+        </section>
+
+        <!-- 4. Estrutura do Turno -->
+        <section class="rule-card bg-slate-800/50 border border-slate-700/80 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-orbitron font-bold text-indigo-400 mb-3 border-b border-slate-700/50 pb-2">
+                4. Estrutura do Turno
+            </h2>
+            <p class="text-sm text-slate-300 mb-3">Na sua vez, o jogador executa a seguinte sequência:</p>
+            <ul class="list-disc list-inside space-y-1.5 text-sm text-slate-300">
+                <li>Lança dois dados convencionais.</li>
+                <li>Avança seu peão pelo tabuleiro no sentido horário o número de casas correspondente à soma dos dados.</li>
+                <li>Executa obrigatoriamente a ação da casa em que parar.</li>
+                <li>Se tirar valores iguais nos dois dados (duplos), joga novamente após encerrar a ação atual. Se tirar duplos 3 vezes consecutivas no mesmo turno, seu sistema sofre um <strong class="text-red-400">Hard Crash</strong> e ele é enviado imediatamente para a casa <strong class="text-white">Servidores Fora do Ar (Desconectar)</strong>.</li>
+            </ul>
+        </section>
+
+        <!-- 5. Regras das Casas e Ações -->
+        <section class="rule-card bg-slate-800/50 border border-slate-700/80 rounded-xl p-6 shadow-lg space-y-5">
+            <h2 class="text-xl font-orbitron font-bold text-emerald-400 border-b border-slate-700/50 pb-2">
+                5. Regras das Casas e Ações
+            </h2>
+
+            <!-- Subseção A -->
+            <div class="space-y-1.5 text-sm">
+                <h3 class="font-orbitron font-bold text-white text-base">A. Ecossistemas Tecnológicos (Propriedades)</h3>
+                <p class="text-slate-300 leading-relaxed">
+                    Representam os setores de tecnologia do jogo (ex: Robótica, Saúde, Semicondutores, Games/IA, Educação, Agrotech, Energia Limpa, Exploração Espacial, Redes Sociais).
+                </p>
+                <ul class="list-disc list-inside space-y-1 text-slate-300 pl-2">
+                    <li><strong class="text-white">Comprar:</strong> Ao parar em um ecossistema sem proprietário, você pode adquiri-lo pagando o valor listado na casa ao Banco.</li>
+                    <li><strong class="text-white">Taxa de Inferência (Aluguel):</strong> Ao parar no ecossistema de um oponente, você deve pagar a ele a Taxa de Inferência indicada no título da propriedade.</li>
+                    <li><strong class="text-white">Monopólio de Setor:</strong> Se você possuir todos os ecossistemas do mesmo grupo de cor, a Taxa de Inferência base de todas as propriedades do setor é dobrada, e você recebe permissão para construir Data Centers nesse grupo.</li>
+                </ul>
+            </div>
+
+            <!-- Subseção B -->
+            <div class="space-y-1.5 text-sm">
+                <h3 class="font-orbitron font-bold text-white text-base">B. Data Centers e Superclusters (Infraestrutura)</h3>
+                <p class="text-slate-300 leading-relaxed">
+                    Em vez de construções imobiliárias tradicionais, você investe no poder computacional do seu setor:
+                </p>
+                <ul class="list-disc list-inside space-y-1 text-slate-300 pl-2">
+                    <li><strong class="text-white">Data Centers Básicos:</strong> É possível construir até 4 Data Centers por ecossistema (a construção deve ser distribuída uniformemente entre as propriedades do mesmo setor). Cada unidade aumenta substancialmente a Taxa de Inferência cobrada dos concorrentes.</li>
+                    <li><strong class="text-white">Superclusters Hiperscala:</strong> Ao atingir 4 Data Centers Básicos em todas as propriedades de um setor, você pode pagar a taxa de upgrade ao Banco e substituí-los por 1 Supercluster Hiperscala, atingindo o nível máximo de cobrança.</li>
+                </ul>
+            </div>
+
+            <!-- Subseção C -->
+            <div class="space-y-1.5 text-sm">
+                <h3 class="font-orbitron font-bold text-white text-base">C. Redes Elétricas e Provedores (Serviços Essenciais)</h3>
+                <ul class="list-disc list-inside space-y-1 text-slate-300 pl-2">
+                    <li><strong class="text-white">Provedores de Fibra e Nuvem:</strong> Quanto mais provedores um jogador possuir, maior será a tarifa fixa cobrada dos oponentes que pararem nessas casas.</li>
+                    <li><strong class="text-white">Redes Elétricas (Matriz Energética):</strong> A taxa cobrada do visitante equivale ao resultado obtido nos dados multiplicado por um fator baseado no número de Redes Elétricas pertencentes ao proprietário.</li>
+                </ul>
+            </div>
+
+            <!-- Subseção D -->
+            <div class="space-y-1.5 text-sm">
+                <h3 class="font-orbitron font-bold text-white text-base">D. Cartas de Avanços e Limites</h3>
+                <p class="text-slate-300 leading-relaxed">
+                    Ao parar em uma casa de <span class="badge-avancos px-1.5 py-0.5 rounded text-xs font-semibold">Avanços</span> ou <span class="badge-limites px-1.5 py-0.5 rounded text-xs font-semibold">Limites</span>, retire a carta do topo do monte correspondente, leia as instruções em voz alta, aplique os efeitos imediatamente (ganhar/perder Tokens, mover o peão, sofrer sanções ou obter bônus) e retorne a carta para a parte inferior do monte.
+                </p>
+            </div>
+
+            <!-- Subseção E -->
+            <div class="space-y-1.5 text-sm">
+                <h3 class="font-orbitron font-bold text-white text-base">E. Casa START / Servidor Ativo</h3>
+                <p class="text-slate-300 leading-relaxed">
+                    Sempre que o peão de um jogador completar uma volta completa pelo tabuleiro e passar ou parar na casa <strong class="text-emerald-400">START / Servidor Ativo</strong>, o Banco paga a ele uma Subvenção Tecnológica no valor de <span class="badge-token px-1.5 py-0.5 rounded text-xs font-semibold">200 Tokens ($TK$)</span>.
+                </p>
+            </div>
+
+            <!-- Subseção F -->
+            <div class="space-y-1.5 text-sm">
+                <h3 class="font-orbitron font-bold text-white text-base">F. Casa Servidores Fora do Ar (Manutenção) / Desconectar</h3>
+                <p class="text-slate-300 leading-relaxed">
+                    Ao ser enviado para a casa <strong class="text-red-400">Servidores Fora do Ar (Desconectar)</strong>:
+                </p>
+                <ul class="list-disc list-inside space-y-1 text-slate-300 pl-2">
+                    <li>Seu peão fica bloqueado e não pode se mover durante sua rodada.</li>
+                    <li>Você mantém o direito de receber Taxas de Inferência de oponentes que pararem em seus ecossistemas ativos.</li>
+                </ul>
+                <p class="text-slate-300 mt-2 font-semibold">Condições para reativar o servidor e sair da manutenção:</p>
+                <ul class="list-disc list-inside space-y-1 text-slate-300 pl-2">
+                    <li>Pagar uma Taxa de Manutenção de <span class="badge-token px-1.5 py-0.5 rounded text-xs font-semibold">50 Tokens ($TK$)</span> ao Banco no início da sua vez.</li>
+                    <li>Utilizar a carta de Avanço "Restaurar do Backup" (Liberdade imediata).</li>
+                    <li>Obter valores iguais nos dois dados em uma das suas três tentativas subsequentes.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 6. Negociações -->
+        <section class="rule-card bg-slate-800/50 border border-slate-700/80 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-orbitron font-bold text-cyan-400 mb-3 border-b border-slate-700/50 pb-2">
+                6. Negociações e Linhas de Crédito
+            </h2>
+            <div class="space-y-3 text-sm text-slate-300">
+                <p>
+                    <strong class="text-white">Acordos e Trocas Comerciais:</strong> Durante o seu turno, é permitido negociar propriedades, créditos e acordos estratégicos com outros jogadores por qualquer valor de Tokens acordado entre as partes.
+                </p>
+                <p>
+                    <strong class="text-white">Penhor de Ecossistemas (Hipotecas):</strong> Para obter liquidez imediata, um jogador pode penhorar um ecossistema junto ao Banco pelo valor de penhor indicado na propriedade. Ecossistemas penhorados não cobram Taxa de Inferência dos concorrentes até que a dívida seja quitada junto ao Banco com o acréscimo de 10% de juros.
+                </p>
+            </div>
+        </section>
+
+        <!-- 7. Falência -->
+        <section class="rule-card bg-slate-800/50 border border-slate-700/80 rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-orbitron font-bold text-red-400 mb-3 border-b border-slate-700/50 pb-2">
+                7. Falência e Fim de Jogo
+            </h2>
+            <div class="space-y-3 text-sm text-slate-300">
+                <p>
+                    <strong class="text-white">Insolvência:</strong> Se um jogador dever mais Tokens a outro participante ou ao Banco do que a soma de seu capital disponível e o valor de liquidação de seus bens (venda de Data Centers ao Banco pela metade do preço e penhor de propriedades), ele deve declarar <strong class="text-red-400">Falência Total de Processamento</strong>.
+                </p>
+                <p>
+                    <strong class="text-white">Eliminação:</strong> Todos os bens restantes e títulos do jogador falido são transferidos ao credor, e o jogador é imediatamente eliminado da partida.
+                </p>
+                <p>
+                    <strong class="text-emerald-400 font-orbitron">Vitória:</strong> O último corporador ou participante que permanecer ativo no ecossistema sem declarar falência vence o jogo e conquista o monopólio do mercado global de Inteligência Artificial.
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-800">
+            <p>Imobil_IA · Sistema de Regras Unificado para Impressão e Exibição Web</p>
+        </footer>
+
+    </main>
+
+</body>
+</html>

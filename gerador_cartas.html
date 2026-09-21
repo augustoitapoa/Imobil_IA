@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Cartas - Imobil_IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Dimensões Exatas para Impressão A4 e Cartas 60mm x 90mm */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 10mm 8mm;
+            margin: 0 auto 20px auto;
+            background: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            display: grid;
+            grid-template-columns: repeat(3, 60mm);
+            grid-template-rows: repeat(3, 90mm);
+            gap: 4mm 5mm;
+            justify-content: center;
+            align-content: center;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
+
+        .card {
+            width: 60mm;
+            height: 90mm;
+            border-radius: 4mm;
+            box-sizing: border-box;
+            padding: 2.5mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            background-color: #ffffff;
+            color: #0f172a;
+            border: 1.5mm solid #0f172a;
+        }
+
+        /* Estilos específicos de Avanços (Verde) */
+        .card-avancos {
+            border-color: #10b981;
+        }
+        .card-avancos .card-header {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+        .card-avancos .vocesabia-box {
+            background-color: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+        .card-avancos .effect-box {
+            background-color: #f0fdf4;
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        /* Estilos específicos de Limites (Vermelho) */
+        .card-limites {
+            border-color: #ef4444;
+        }
+        .card-limites .card-header {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+        .card-limites .vocesabia-box {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+        .card-limites .effect-box {
+            background-color: #fef2f2;
+            border-color: #fca5a5;
+            color: #991b1b;
+        }
+
+        /* Regras de Impressão */
+        @media print {
+            body {
+                background: none !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .a4-page {
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 8mm 6mm !important;
+                width: 210mm !important;
+                height: 297mm !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Painel de Controlo (Não sai na Impressão) -->
+    <div class="no-print max-w-5xl mx-auto mb-8 bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-orbitron font-bold text-emerald-400">Imobil_IA · Gerador de Cartas</h1>
+                <p class="text-slate-400 text-sm mt-1">Formato de impressão A4 Retrato (Cartas 60mm x 90mm · 9 cartas por folha)</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <button onclick="toggleEmojis()" id="btn-emoji" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg text-sm transition">
+                    Mostrar/Ocultar Emojis
+                </button>
+                <button onclick="window.print()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-orbitron font-bold px-6 py-2 rounded-lg text-sm transition shadow-lg shadow-emerald-500/20">
+                    🖨️ Imprimir Cartas
+                </button>
+            </div>
+        </div>
+
+        <!-- Formulário para Criação de Novas Cartas -->
+        <div class="pt-6 border-t border-slate-700">
+            <h2 class="text-lg font-orbitron font-bold text-emerald-400 mb-3 flex items-center gap-2">
+                <span>✨</span> Adicionar Nova Carta
+            </h2>
+            <form id="add-card-form" onsubmit="event.preventDefault(); addNewCard();" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tipo de Carta</label>
+                    <select id="input-type" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                        <option value="avancos">AVANÇO (Verde)</option>
+                        <option value="limites">LIMITE (Vermelho)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Título da Carta</label>
+                    <input type="text" id="input-title" placeholder="Ex: Novo Algoritmo" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <!-- Campo de Emoji com Botão do Teclado de Emojis -->
+                <div class="relative">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Emoji / Ícone</label>
+                    <div class="flex items-center gap-1.5">
+                        <input type="text" id="input-emoji" placeholder="Ex: 🚀" value="⚡" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 text-center text-lg">
+                        <button type="button" onclick="toggleEmojiPicker(event)" class="bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white p-2 rounded-lg text-base transition shrink-0 flex items-center justify-center" title="Abrir Teclado de Emojis">
+                            😀
+                        </button>
+                    </div>
+
+                    <!-- Popover do Teclado de Emojis -->
+                    <div id="emoji-picker-popover" class="hidden absolute left-0 top-full mt-2 z-50 w-64 bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-2xl">
+                        <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-800">
+                            <span class="text-xs font-orbitron font-semibold text-slate-300">Escolha um Emoji</span>
+                            <button type="button" onclick="closeEmojiPicker()" class="text-slate-400 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded bg-slate-800">✕</button>
+                        </div>
+                        <div id="emoji-grid" class="grid grid-cols-6 gap-1.5 max-h-40 overflow-y-auto pr-1 text-xl">
+                            <!-- Emojis injetados via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Descrição Contextual</label>
+                    <input type="text" id="input-description" placeholder="Ex: Sua empresa fechou uma parceria com um provedor de dados..." required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Efeito / Dinâmica do Jogo</label>
+                    <input type="text" id="input-effect" placeholder="Ex: 💰 Receba M$ 150 do banco | 🏃 Avance 2 casas" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Fato Real ("Você sabia?")</label>
+                    <textarea id="input-fact" rows="2" placeholder="Ex: Em 2026, novas diretrizes regulatórias exigem..." required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                </div>
+
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Fonte da Informação</label>
+                        <input type="text" id="input-source" placeholder="Ex: Tecnoblog | G1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 mb-3">
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-orbitron font-bold py-2 rounded-lg text-sm transition shadow-md shadow-emerald-500/10">
+                        ➕ Criar e Adicionar Carta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contentor de Paginas A4 -->
+    <div id="pages-container"></div>
+
+    <script>
+        // Lista de Emojis Temáticos para o Teclado
+        const emojiList = [
+            '⚡', '☢️', '💧', '🛡️', '🧬', '💻', 
+            '💼', '🚦', '💰', '🔄', '🤖', '🏆', 
+            '🛰️', '📊', '🤝', '📈', '🏷️', '🌵', 
+            '📦', '⚖️', '📰', '☁️', '🔓', '🗑️', 
+            '😵‍💫', '🛑', '🪧', '🚫', '🏃‍♂️', '🔍', 
+            '🔌', '🎯', '🚀', '🧠', '🔮', '💡', 
+            '🚨', '🔋', '🌐', '💎', '🧾', '🎲'
+        ];
+
+        const cardsData = [
+            // ==========================================
+            // 16 CARTAS DE AVANÇOS (SORTE / BENEFÍCIOS)
+            // ==========================================
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '☢️',
+                title: 'Parceria Energética',
+                description: 'Sua empresa fechou um contrato para alimentar seu data center com energia nuclear.',
+                effect: '💰 Receba M$ 150 do banco pelo contrato de energia.',
+                fact: 'A Microsoft assinou um acordo de 20 anos para reativar o reator da usina nuclear de Three Mile Island e abastecer seus data centers de IA.',
+                source: 'Tecnoblog | InfoMoney'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '💧',
+                title: 'Aumento de Eficiência',
+                description: 'Seu novo modelo reduziu o consumo de água e energia para resfriamento de servidores.',
+                effect: '🏃 Avance 2 casas no tabuleiro.',
+                fact: 'Gigantes de tecnologia implementaram sistemas de refrigeração líquida (liquid cooling) direto nos chips, reduzindo a evaporação de água potável.',
+                source: 'G1 | Grundfos'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🛡️',
+                title: 'Contrato Governamental',
+                description: 'O governo assinou um contrato multimilionário para usar sua IA em serviços de defesa e segurança.',
+                effect: '💰 Ganhe M$ 200 do banco.',
+                fact: 'O Departamento de Defesa dos EUA (Pentágono) fechou contratos de centenas de milhões de dólares com empresas de IA como a OpenAI e a xAI.',
+                source: 'Conversion / Blog | IstoÉ Dinheiro'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🧬',
+                title: 'Descoberta na Saúde',
+                description: 'Sua IA mapeou a estrutura de proteínas, revolucionando a criação de remédios.',
+                effect: '🎯 Avance até a propriedade do Setor de Saúde mais próxima.',
+                fact: 'O algoritmo AlphaFold, da DeepMind/Google, previu a estrutura de mais de 200 milhões de proteínas e venceu o Prêmio Nobel.',
+                source: 'Unicamp / Bi0s | BioInfo'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '💻',
+                title: 'Avanço nos Chips',
+                description: 'Uma nova arquitetura de processadores entregou alto desempenho com menor consumo energético.',
+                effect: '🛡️ Isenção do pagamento da próxima taxa ou imposto.',
+                fact: 'A Nvidia lançou a arquitetura Blackwell (como o chip B200), que promete eficiência energética até 25 vezes superior em relação à geração anterior.',
+                source: 'InfoMoney | Ionos'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '💼',
+                title: 'Adoção Enterprise',
+                description: 'Uma grande corporação adotou em massa seus assistentes virtuais de IA no ambiente corporativo.',
+                effect: '👥 Receba M$ 50 de cada um dos outros jogadores.',
+                fact: 'Empresas multinacionais integraram em escala ferramentas como Microsoft Copilot e ChatGPT Enterprise ao trabalho diário.',
+                source: 'Exame'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🚦',
+                title: 'Redução de Poluição',
+                description: 'A IA da sua empresa otimizou o tráfego nas cidades, reduzindo o consumo de combustível e emissões.',
+                effect: '🏃 Avance 3 casas.',
+                fact: 'O Google lançou o projeto Green Light, usando IA em semáforos para diminuir congestionamentos e emissões nos cruzamentos urbanos.',
+                source: 'Google Blog Brasil'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '💰',
+                title: 'Investimento Histórico',
+                description: 'Fundos de capital de risco e Big Techs aportaram bilhões de dólares na sua startup.',
+                effect: '💎 Ganhe um aporte de M$ 300 do banco.',
+                fact: 'A OpenAI e a xAI receberam rodadas de financiamento multimilionárias lideradas pela Microsoft e investidores globais.',
+                source: 'Forbes Brasil'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🔄',
+                title: 'Desperdício Zero',
+                description: 'Seu data center adotou refrigeração em circuito fechado, zerando o consumo continuado de água potável.',
+                effect: '🏷️ Desconto de 50% na compra da próxima propriedade.',
+                fact: 'Novas diretrizes da indústria de data centers priorizam a recirculação total do volume de água potável no resfriamento.',
+                source: 'Data Center Dynamics (DCD)'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🤖',
+                title: 'Automação de Código',
+                description: 'Seus assistentes de programação autônomos impulsionaram a produtividade dos desenvolvedores.',
+                effect: '🎲 Jogue os dados novamente.',
+                fact: 'Ferramentas como o GitHub Copilot se consolidaram como padrão, gerando grande percentual do código em equipes de tecnologia.',
+                source: 'Canaltech'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🏆',
+                title: 'Superação de Expectativas',
+                description: 'Seu modelo de linguagem superou recordes globais em testes de matemática e raciocínio.',
+                effect: '💰 Receba M$ 100 e avance 1 casa.',
+                fact: 'O modelo OpenAI o1 e algoritmos como o AlphaGeometry solucionaram problemas complexos de olimpíadas internacionais.',
+                source: 'MIT Technology Review Brasil'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🛰️',
+                title: 'Crédito de Carbono',
+                description: 'Sua IA de monitoramento via satélite auditou o sequestro de carbono em florestas em tempo real.',
+                effect: '🌱 Receba M$ 100 em bônus ambientais.',
+                fact: 'Startups como a Pachama usam aprendizado de máquina e imagens de satélite para verificar a preservação florestal e validar créditos de carbono.',
+                source: 'Época Negócios'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '📊',
+                title: 'Uso de Dados Sintéticos',
+                description: 'Sua equipe usou dados sintéticos criados por IA para treinar o modelo sem gastar com bases caras.',
+                effect: '🏃 Avance 2 casas.',
+                fact: 'Diante do risco do esgotamento da internet textual, empresas de IA passaram a utilizar dados sintéticos gerados por outros modelos para treinamento.',
+                source: 'MIT Technology Review Brasil'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🤝',
+                title: 'Fusão Estratégica',
+                description: 'Uma gigante da tecnologia comprou uma participação estratégica na sua startup.',
+                effect: '💰 Receba M$ 250 de aporte estratégico.',
+                fact: 'A Amazon e o Google aportaram bilhões na Anthropic, garantindo parcerias para infraestrutura de nuvem.',
+                source: 'Valor Econômico'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '📈',
+                title: 'Aumento de Receita',
+                description: 'Clientes corporativos comprovaram retorno financeiro e impulsionaram o faturamento do seu ecossistema.',
+                effect: '💰 Receba M$ 120 de lucros corporativos.',
+                fact: 'Os balanços financeiros de Big Techs demonstraram crescimento de receita impulsionado pela divisão de nuvem e serviços de IA.',
+                source: 'InfoMoney'
+            },
+            {
+                type: 'avancos',
+                headerText: 'AVANÇO',
+                emoji: '🏷️',
+                title: 'Chips Mais Baratos',
+                description: 'A concorrência no mercado de hardware forçou a queda dos preços das placas de processamento.',
+                effect: '🚀 Vá direto para o START (Ganhe M$ 200).',
+                fact: 'A AMD lançou a linha de chips de IA MI300 para rivalizar diretamente com as GPUs da Nvidia, pressionando o mercado de semicondutores.',
+                source: 'TecMundo'
+            },
+
+            // ==========================================
+            // 16 CARTAS DE LIMITES (REVÉS / PENALIDADES)
+            // ==========================================
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '⚡',
+                title: 'Racionamento Elétrico',
+                description: 'A alta demanda elétrica forçou autoridades a limitar a energia fornecida aos data centers.',
+                effect: '💸 Pague M$ 100 ao banco para geradores de emergência.',
+                fact: 'A alta demanda de energia por data centers gerou alertas de sobrecarga na rede elétrica de regiões na Virgínia (EUA) e em países da Europa.',
+                source: 'CNN Brasil - Economia'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🌵',
+                title: 'Crise Hídrica',
+                description: 'A seca regional gerou apelos da comunidade e multas ambientais devido ao elevado uso de água potável.',
+                effect: '🧾 Pague M$ 30 ao banco por cada propriedade que possuir.',
+                fact: 'Moradores e ambientalistas em diversas regiões protestaram contra o volume de água potável captada por data centers durante períodos de seca.',
+                source: 'G1 Tecnologia'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '📦',
+                title: 'Escassez de Hardware',
+                description: 'A falta de chips avançados no mercado global atrasou o desenvolvimento de novos modelos.',
+                effect: '⏳ Fique sem jogar por 1 turno aguardando entregas.',
+                fact: 'O mercado de IA enfrentou gargalos nas filas de espera pelas GPUs Nvidia H100 e H200.',
+                source: 'InfoMoney'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '⚖️',
+                title: 'Multa Regulatória',
+                description: 'Sua empresa violou termos da nova lei de IA e recebeu uma multa proporcional ao seu faturamento global.',
+                effect: '💸 Pague uma multa regulatória de M$ 200 ao banco.',
+                fact: 'O EU AI Act (Lei da IA da União Europeia) entrou em vigor estabelecendo penalidades que podem chegar a 7% do faturamento global da empresa infratora.',
+                source: 'Migalhas'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '📰',
+                title: 'Direitos Autorais',
+                description: 'Criadores e jornais processaram sua empresa pelo treinamento do modelo sem autorização.',
+                effect: '💸 Pague M$ 150 em custos processuais e acordos.',
+                fact: 'O jornal The New York Times abriu um processo contra a OpenAI e a Microsoft pelo uso não autorizado de matérias jornalísticas no treinamento do ChatGPT.',
+                source: 'Migalhas | G1'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '☁️',
+                title: 'Aumento na Nuvem',
+                description: 'O aumento dos custos operacionais no processamento reduziu as margens financeiras.',
+                effect: '💸 Pague M$ 100 de custos adicionais de infraestrutura.',
+                fact: 'O alto custo de inferência na nuvem (AWS, Google Cloud, Azure) impactou o orçamento e a sustentabilidade de startups de IA generativa.',
+                source: 'Exame'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🔓',
+                title: 'Falha de Segurança',
+                description: 'Uma falha no sistema expôs dados e o histórico confidencial de usuários da plataforma.',
+                effect: '↩️ Volte 3 casas para contenção de danos.',
+                fact: 'Instabilidades de segurança causaram o vazamento temporário de títulos de conversas do histórico do ChatGPT, levando a empresa a pausar o serviço na época.',
+                source: 'Tecnoblog'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🗑️',
+                title: 'Lixo Eletrônico',
+                description: 'Regras ambientais impuseram custos adicionais para o descarte de servidores e hardware obsoletos.',
+                effect: '💸 Pague M$ 80 de taxa de descarte ecológico.',
+                fact: 'O ciclo de vida curto dos aceleradores de IA levantou discussões ecológicas globais sobre o descarte e o volume do lixo eletrônico.',
+                source: 'O Globo - Sociedade'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '😵‍💫',
+                title: 'Alucinação do Modelo',
+                description: 'Erros graves e precedentes falsos gerados pela IA geraram processos e sanções judiciais.',
+                effect: '💸 Pague M$ 100 em indenização de danos à imagem.',
+                fact: 'Advogados que utilizaram o ChatGPT em petições judiciais acabaram multados após o modelo "alucinar" e inventar decisões de tribunais que não existiam.',
+                source: 'Consultor Jurídico (ConJur)'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🛑',
+                title: 'Cancelamento de Piloto',
+                description: 'Clientes encerraram projetos por não alcançarem o retorno financeiro esperado.',
+                effect: '↩️ Recue 2 casas.',
+                fact: 'Consultorias de mercado indicaram que parcela expressiva dos projetos-piloto de IA generativa em empresas não avançaram devido à falta de ROI tangível.',
+                source: 'Bags e Negócios / TI'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🪧',
+                title: 'Boicote de Consumidores',
+                description: 'Campanhas públicas de artistas e profissionais criticaram a substituição de trabalho humano por IA.',
+                effect: '⏳ Fique sem jogar por 1 turno devido a protestos.',
+                fact: 'Roteiristas e atores de Hollywood lideraram uma paralisação histórica exigindo proteção legal e regulamentação contra o uso irrestrito da IA generativa.',
+                source: 'Folha de S.Paulo'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🚫',
+                title: 'Restrições de Exportação',
+                description: 'Sanções governamentais impediram a venda de chips avançados de IA para mercados internacionais.',
+                effect: '💸 Pague M$ 120 em tarifas alfandegárias de sanção.',
+                fact: 'O governo dos EUA impôs sanções e restrições rígidas à exportação de processadores de IA de ponta para a China.',
+                source: 'CNN Brasil | IstoÉ Dinheiro'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🏃‍♂️',
+                title: 'Fuga de Talentos',
+                description: 'Pesquisadores seniores da equipe aceitaram propostas milionárias de concorrentes.',
+                effect: '💸 Pague M$ 150 para contratar e reter especialistas.',
+                fact: 'A acirrada competição no Vale do Silício levou empresas a oferecerem pacotes salariais milionários para atrair especialistas em aprendizado profundo.',
+                source: 'Exame - Carreira'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🔍',
+                title: 'Processo Antitruste',
+                description: 'Reguladores iniciaram investigações sobre monopólio e acordos entre Big Techs e startups de IA.',
+                effect: '👥 Pague M$ 40 para cada um dos outros jogadores.',
+                fact: 'Reguladores nos EUA (FTC) e na Europa abriram investigações para apurar se aportes financeiros exclusivos configuravam fusões veladas e bloqueio de concorrência.',
+                source: 'Reuters em Português'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🔌',
+                title: 'Apagão Infraestrutura',
+                description: 'Picos de acesso e falhas operacionais tiraram os principais modelos do ar simultaneamente.',
+                effect: '🚨 Vá direto para SERVIDORES FORA DO AR (Desconectar).',
+                fact: 'Picos repentinos de demanda causaram quedas globais no ChatGPT e em serviços em nuvem essenciais para aplicações de terceiros.',
+                source: 'G1 Tecnologia'
+            },
+            {
+                type: 'limites',
+                headerText: 'LIMITE',
+                emoji: '🎯',
+                title: 'Viés Algorítmico',
+                description: 'O modelo de seleção de pessoal apresentou vieses e o uso da ferramenta teve de ser suspenso.',
+                effect: '↩️ Volte 2 casas para recalibrar os algoritmos.',
+                fact: 'Casos de algoritmos de triagem que favoreciam determinados perfis demográficos geraram debates jurídicos e o banimento dessas soluções em processos seletivos.',
+                source: 'BBC News Brasil'
+            }
+        ];
+
+        let showEmojis = true;
+
+        // Inicializador do Grid de Emojis do Teclado
+        function initEmojiPicker() {
+            const grid = document.getElementById('emoji-grid');
+            grid.innerHTML = '';
+            emojiList.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'hover:bg-slate-800 p-1 rounded transition text-center flex items-center justify-center';
+                btn.innerText = emoji;
+                btn.onclick = () => selectEmoji(emoji);
+                grid.appendChild(btn);
+            });
+        }
+
+        function toggleEmojiPicker(e) {
+            e.stopPropagation();
+            const popover = document.getElementById('emoji-picker-popover');
+            popover.classList.toggle('hidden');
+        }
+
+        function closeEmojiPicker() {
+            document.getElementById('emoji-picker-popover').classList.add('hidden');
+        }
+
+        function selectEmoji(emoji) {
+            document.getElementById('input-emoji').value = emoji;
+            closeEmojiPicker();
+        }
+
+        // Fechar o popover ao clicar fora dele
+        document.addEventListener('click', (e) => {
+            const popover = document.getElementById('emoji-picker-popover');
+            if (popover && !popover.contains(e.target)) {
+                popover.classList.add('hidden');
+            }
+        });
+
+        function renderCards() {
+            const container = document.getElementById('pages-container');
+            container.innerHTML = '';
+
+            const cardsPerPage = 9;
+            const totalPages = Math.ceil(cardsData.length / cardsPerPage);
+
+            for (let p = 0; p < totalPages; p++) {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'a4-page';
+
+                const pageCards = cardsData.slice(p * cardsPerPage, (p + 1) * cardsPerPage);
+
+                pageCards.forEach(card => {
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = `card card-${card.type}`;
+
+                    cardDiv.innerHTML = `
+                        <!-- Cabecalho da Carta -->
+                        <div class="card-header font-orbitron text-[10px] font-bold uppercase tracking-wider py-1 px-2 text-center rounded-sm flex items-center justify-between">
+                            <span>${card.headerText}</span>
+                            <span class="text-[9px] opacity-80">Imobil_IA</span>
+                        </div>
+
+                        <!-- Elemento Visual / Emoji Icon (Opcional) -->
+                        ${showEmojis ? `
+                            <div class="emoji-container text-center my-0.5">
+                                <span class="text-2xl inline-block drop-shadow-sm">${card.emoji}</span>
+                            </div>
+                        ` : ''}
+
+                        <!-- Titulo e Descrição Contextual -->
+                        <div class="my-0.5 text-center">
+                            <h3 class="font-orbitron font-bold text-[10.5px] leading-tight text-slate-900 mb-0.5">${card.title}</h3>
+                            <p class="text-[9px] leading-snug text-slate-700 font-medium px-1">${card.description}</p>
+                        </div>
+
+                        <!-- Efeito / Dinâmica de Jogo -->
+                        ${card.effect ? `
+                            <div class="effect-box my-0.5 px-1.5 py-1 text-center border rounded text-[9px] font-extrabold leading-tight">
+                                ${card.effect}
+                            </div>
+                        ` : ''}
+
+                        <!-- Caixa VOCÊ SABIA? -->
+                        <div class="vocesabia-box p-1.5 rounded-md border flex-1 flex flex-col justify-between my-0.5">
+                            <div>
+                                <div class="font-orbitron font-extrabold text-[8px] uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                                    <span>💡</span> VOCÊ SABIA?
+                                </div>
+                                <p class="text-[8px] leading-tight italic font-normal">${card.fact}</p>
+                            </div>
+                            <div class="text-[7px] text-right opacity-75 font-semibold mt-0.5">
+                                Fonte: ${card.source}
+                            </div>
+                        </div>
+                    `;
+
+                    pageDiv.appendChild(cardDiv);
+                });
+
+                container.appendChild(pageDiv);
+            }
+        }
+
+        function addNewCard() {
+            const type = document.getElementById('input-type').value;
+            const title = document.getElementById('input-title').value.trim();
+            const emoji = document.getElementById('input-emoji').value.trim() || '❓';
+            const description = document.getElementById('input-description').value.trim();
+            const effect = document.getElementById('input-effect').value.trim();
+            const fact = document.getElementById('input-fact').value.trim();
+            const source = document.getElementById('input-source').value.trim();
+
+            if (!title || !description || !effect || !fact || !source) {
+                alert('Por favor, preencha todos os campos obrigatórios para criar a carta.');
+                return;
+            }
+
+            const newCard = {
+                type: type,
+                headerText: type === 'avancos' ? 'AVANÇO' : 'LIMITE',
+                emoji: emoji,
+                title: title,
+                description: description,
+                effect: effect,
+                fact: fact,
+                source: source
+            };
+
+            cardsData.push(newCard);
+
+            document.getElementById('add-card-form').reset();
+            document.getElementById('input-emoji').value = '⚡';
+
+            renderCards();
+
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function toggleEmojis() {
+            showEmojis = !showEmojis;
+            const btn = document.getElementById('btn-emoji');
+            btn.innerText = showEmojis ? 'Ocultar Emojis' : 'Mostrar Emojis';
+            btn.classList.toggle('bg-indigo-600');
+            btn.classList.toggle('bg-slate-600');
+            renderCards();
+        }
+
+        // Execuções Iniciais
+        initEmojiPicker();
+        renderCards();
+    </script>
+</body>
+</html>
