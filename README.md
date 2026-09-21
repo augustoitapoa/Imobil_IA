@@ -19,3 +19,4 @@ to-do list (WIP):
 
 Todas as Páginas são feitas para impressão, já que a intenção do projeto é ser aplicado de forma desplugada. 
 
+Projeto Open-source para fins educativos e não-comerciais.
